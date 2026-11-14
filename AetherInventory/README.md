@@ -1,4 +1,4 @@
-# Aether Inventory 0.5.11 (WoW Forever)
+# Aether Inventory 0.5.13 (WoW Forever)
 
 An experimental character and inventory addon in the ornate purple, lavender, and antique-gold style of Aether Encounter.
 
@@ -7,7 +7,7 @@ An experimental character and inventory addon in the ornate purple, lavender, an
 - One character, equipment, and bags window with live item and character data.
 - Character panel tabs for Gear, Stats, Reputation, Skills, Currency, Titles, Pet, and Settings. Long pages scroll.
 - Pet page shows active-pet health, movement speed, armor, damage range, attack power, critical strike, six resistances, happiness, loyalty, diet, and compatible food when the client exposes those values. For feeding, activate the in-game Feed Pet (Yum) ability and then left-click compatible food in Aether Inventory, as with Blizzard's bags.
-- Settings lets you choose RGB colors and background opacity for the window art, bag panels, bag headers, and item slots; choices are saved and can be reset to the original purple palette.
+- Settings lets you choose RGB colors and background opacity for the window art, bag panels, bag headers, and item slots; choices are saved and can be reset to the original purple palette. The Settings tab also has a Donate via Venmo button.
 - Separate sections for the Backpack, each equipped bag, and the reagent bag when present. Bag sections use the client's bag names when available.
 - Right-click ordinary items to use them through secure actions; right-click items while a merchant is open to sell them. Locked items are protected from either action.
 - In **All** view, bag slots stay in their physical positions. Category and search filters compact matching items into rows within their original bag sections and hide sections with no matches. Each displayed button stays linked to its real physical bag slot. Recent tracks newly acquired items or stack increases for 90 seconds.
@@ -43,4 +43,3 @@ An experimental character and inventory addon in the ornate purple, lavender, an
 - Upgrade scores are advisory and can miss equip requirements, weapon-speed preferences, set effects, enchants, and hidden effects. Empty equipment slots are intentionally not counted as upgrade opportunities. Compare the item tooltip before equipping.
 - WoW Forever's merchant frame opens its native bags automatically. Aether Inventory lets that open call finish and closes the Blizzard bags immediately in a post-hook, while its own secure bag buttons remain responsible for item actions.
 - `PREVIEW.png` remains a schematic illustration rather than an in-game screenshot.
-

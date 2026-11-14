@@ -1,5 +1,5 @@
 local addonName, addon = ...
-addon.version = "0.5.12"
+addon.version = "0.5.13"
 addon.media = "Interface\\AddOns\\AetherInventory\\Media\\"
 
 local C = C_Container
@@ -217,4 +217,3 @@ function addon.Snapshot()
   table.sort(good,function(a,b) return a.upgrade.delta>b.upgrade.delta end)
   return {total=total,free=free,freeGeneral=freeGeneral,freeSpecialty=freeSpecialty,items=all,upgrades=good,byBag=byBag}
 end
-

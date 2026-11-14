@@ -1,5 +1,13 @@
 # Aether Inventory Changelog
 
+## 0.5.13
+
+- Add a Donate via Venmo link to the bottom of the Settings tab.
+- Space the quick-stat rows and move the upgrade detail text lower to improve readability.
+- Center section headings inside their header bars.
+- Use secure bag-slot item actions for right-clicking potions, usable health items, and food; vendor right-click sales continue using the container API.
+
+
 ## 0.5.12
 
 - Add current Health, Mana, and Movement Speed to the Gear tab's Stats / Gear quick summary.
@@ -201,4 +209,3 @@
 - Character model, equipped gear slots, and physical-bag grid in one window.
 - Free-slot indicators, live search, category filters, and advisory gear scoring.
 - Secure right-click item action, plus the native bag window as the movement fallback.
-

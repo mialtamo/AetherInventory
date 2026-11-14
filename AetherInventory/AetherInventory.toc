@@ -1,10 +1,9 @@
 ## Interface: 16001
-## Title: Aether Inventory |cffcfa8ff(0.5.12)|r
+## Title: Aether Inventory |cffcfa8ff(0.5.13)|r
 ## Notes: Ornate interactive character and physical-bag inventory for WoW Forever.
 ## Author: OpenAI, original fan addon
-## Version: 0.5.12
+## Version: 0.5.13
 ## SavedVariables: AetherInventoryDB
 ## IconTexture: Interface\Icons\INV_Misc_Bag_08
 Data.lua
 UI.lua
-

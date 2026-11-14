@@ -3,7 +3,7 @@ local floor, ceil, max, min = math.floor, math.ceil, math.max, math.min
 local tinsert = table.insert
 local FRAME_W, FRAME_H = 1110, 720
 local GOLD, LIGHT, MUTED, TEAL = {0.93,0.72,0.38}, {0.94,0.90,1}, {0.60,0.56,0.73}, {0.37,0.96,0.76}
-local frame, mainText, model, upgradeText, summaryText, statText, scrollFrame, scrollContent
+local frame, mainText, model, upgradeText, summaryText, statText, gearStatText, scrollFrame, scrollContent
 local searchBox, footerText, footerGoldText
 local equippedWidgets, bagSections, filterButtons = {}, {}, {}
 local currentSnapshot, filter = nil, "All"
@@ -312,12 +312,10 @@ local function setBagActionMode()
       local locked=item and isBagItemLocked(item,button.bagID,button.slotID)
       button:SetAttribute("aetherLocked",locked and true or false)
       if item and not locked and not selling then
-        -- Resolve normal use by item link inside the secure action handler.
-        -- This avoids calling protected item-use APIs from addon click code.
-        local link=item.hyperlink or A.BagLink(button.bagID,button.slotID)
-        if not link and item.itemID then link="item:"..tostring(item.itemID) end
+        -- SecureActionButton's item handler parses "bag slot" and invokes
+        -- the client-owned use action for that exact inventory location.
         button:SetAttribute("type2","item")
-        button:SetAttribute("item2",link)
+        button:SetAttribute("item2",tostring(button.bagID).." "..tostring(button.slotID))
         button:SetAttribute("bag2",button.bagID);button:SetAttribute("slot2",button.slotID)
       else
         button:SetAttribute("type2",nil);button:SetAttribute("item2",nil)
@@ -555,10 +553,23 @@ local function openColorPicker(key)
   end
 end
 
+if StaticPopupDialogs then
+  StaticPopupDialogs["AETHERINVENTORY_DONATE"]={
+    text="Thanks for supporting Aether Inventory! Copy the Venmo link below into your browser.",
+    button1=OKAY or "Close",timeout=0,whileDead=true,hideOnEscape=true,hasEditBox=true,
+    OnShow=function(dialog)
+      if dialog.editBox then
+        dialog.editBox:SetText("https://venmo.com/Mike-A-34")
+        dialog.editBox:HighlightText()
+      end
+    end,
+    EditBoxOnEscapePressed=function(dialog) dialog:Hide() end,
+  }
+end
 local function createSettingsPage()
   settingsPage=CreateFrame("Frame",nil,characterContent)
   settingsPage:SetPoint("TOPLEFT",characterContent,"TOPLEFT",0,0)
-  settingsPage:SetSize(368,320)
+  settingsPage:SetSize(368,356)
   local note=textLabel(settingsPage,"Choose a background color. The picker also lets you adjust opacity.",11,MUTED)
   note:SetPoint("TOPLEFT",settingsPage,"TOPLEFT",7,-8);note:SetWidth(348);note:SetWordWrap(true)
   settingsSwatches={}
@@ -589,6 +600,9 @@ local function createSettingsPage()
   end)
   local resetNote=textLabel(settingsPage,"Colors are saved automatically.",10,MUTED)
   resetNote:SetPoint("TOPLEFT",settingsPage,"TOPLEFT",8,-278)
+  makeButton(settingsPage,"Donate via Venmo",194,-310,154,29,function()
+    if StaticPopup_Show then StaticPopup_Show("AETHERINVENTORY_DONATE") end
+  end)
   settingsPage:Hide()
 end
 
@@ -731,7 +745,7 @@ local function renderCharacterPage()
     for _,row in ipairs(pageRows) do row.text:Hide();row.bg:Hide();row.progressBg:Hide();row.progressFill:Hide();row.progressText:Hide() end
     if petPage then petPage:Hide() end
     if settingsPage then settingsPage:Show() end
-    characterContent:SetHeight(320)
+    characterContent:SetHeight(356)
     return
   end
   if settingsPage then settingsPage:Hide() end
@@ -752,15 +766,22 @@ local function renderCharacterPage()
     if entry.kind=="skill" then
       t:ClearAllPoints();t:SetPoint("TOPLEFT",characterContent,"TOPLEFT",12,-y)
       t:SetWidth(250);t:SetWordWrap(false);t:SetFont("Fonts\\FRIZQT__.TTF",12,"OUTLINE")
-      t:SetTextColor(unpack(LIGHT));t:SetText(entry.text);t:Show();row.bg:Hide()
+      t:SetJustifyH("LEFT");t:SetTextColor(unpack(LIGHT));t:SetText(entry.text);t:Show();row.bg:Hide()
       row.progressBg:ClearAllPoints();row.progressBg:SetPoint("TOPLEFT",characterContent,"TOPLEFT",12,-y-21);row.progressBg:SetSize(332,8);row.progressBg:Show()
       row.progressFill:ClearAllPoints();row.progressFill:SetPoint("TOPLEFT",row.progressBg,"TOPLEFT",1,-1);row.progressFill:SetHeight(6);row.progressFill:SetWidth(math.max(0,330*(entry.progress or 0)));row.progressFill:Show()
       row.progressText:ClearAllPoints();row.progressText:SetPoint("TOPRIGHT",characterContent,"TOPLEFT",344,-y);row.progressText:SetText(entry.value or "");row.progressText:Show()
       t:SetDrawLayer("OVERLAY")
     else
       row.progressBg:Hide();row.progressFill:Hide();row.progressText:Hide()
-    t:ClearAllPoints();t:SetPoint("TOPLEFT",characterContent,"TOPLEFT",12,-y)
-    t:SetWidth(344);t:SetWordWrap(true)
+    t:ClearAllPoints()
+    if entry.kind=="section" then
+      t:SetPoint("TOPLEFT",characterContent,"TOPLEFT",5,-y)
+      t:SetWidth(350);t:SetJustifyH("CENTER")
+    else
+      t:SetPoint("TOPLEFT",characterContent,"TOPLEFT",12,-y)
+      t:SetWidth(344);t:SetJustifyH("LEFT")
+    end
+    t:SetWordWrap(true)
     t:SetFont("Fonts\\FRIZQT__.TTF",entry.kind=="section" and 13 or 12,"OUTLINE")
     t:SetTextColor(unpack(entry.kind=="section" and GOLD or LIGHT));t:SetText(entry.text);t:Show()
     if entry.kind=="section" then
@@ -1143,10 +1164,17 @@ local function updateEquipped(snap)
     local healthText=hp and hpMax and (hp.."/"..hpMax) or "?"
     local manaText=mana and manaMax and (mana.."/"..manaMax) or "?"
     local speedText=speed and (floor(speed/7*100+0.5).."%") or "?"
-    statText:SetText("Health "..healthText.."   Mana "..manaText.."   Speed "..speedText..
-      "\nArmor "..tostring(armor).."   Agility "..tostring(agi or "?")..
-      "   Stamina "..tostring(sta or "?").."   |cff64e59c"..#snap.upgrades.." upgrades|r")
+    statText:SetText("Health "..healthText.."   Mana "..manaText.."   Speed "..speedText)
     statText:SetWidth(372)
+  end
+  if gearStatText then
+    local _,agi=UnitStat("player",2)
+    local _,sta=UnitStat("player",3)
+    local armorBase,armorEffective=apiValue(UnitArmor,"player")
+    local armor=armorEffective or armorBase or "?"
+    gearStatText:SetText("Armor "..tostring(armor).."   Agility "..tostring(agi or "?")..
+      "   Stamina "..tostring(sta or "?").."   |cff64e59c"..#snap.upgrades.." upgrades|r")
+    gearStatText:SetWidth(372)
   end
   if summaryText then summaryText:SetText("") end
 end
@@ -1364,9 +1392,11 @@ function A.CreateUI()
   gearElements[#gearElements+1]=statLabel
   statText=textLabel(frame,"",12,LIGHT);statText:SetPoint("TOPLEFT",26,-591)
   gearElements[#gearElements+1]=statText
+  gearStatText=textLabel(frame,"",12,LIGHT);gearStatText:SetPoint("TOPLEFT",26,-612)
+  gearElements[#gearElements+1]=gearStatText
   summaryText=textLabel(frame,"",12,TEAL);summaryText:SetPoint("TOPLEFT",26,-615);summaryText:Hide()
   gearElements[#gearElements+1]=summaryText
-  upgradeText=textLabel(frame,"",11,LIGHT);upgradeText:SetPoint("TOPLEFT",26,-634)
+  upgradeText=textLabel(frame,"",11,LIGHT);upgradeText:SetPoint("TOPLEFT",26,-646)
   upgradeText:SetWidth(372);upgradeText:SetJustifyH("LEFT")
   gearElements[#gearElements+1]=upgradeText
 
