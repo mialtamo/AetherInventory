@@ -555,16 +555,35 @@ end
 
 if StaticPopupDialogs then
   StaticPopupDialogs["AETHERINVENTORY_DONATE"]={
-    text="Thanks for supporting Aether Inventory! Copy the Venmo link below into your browser.",
-    button1=OKAY or "Close",timeout=0,whileDead=true,hideOnEscape=true,hasEditBox=true,
+    text="Donations help fund ongoing development.\nClick below to open Venmo:\n|Hurl:https://venmo.com/Mike-A-34|h|cff70dfffOpen Venmo|h|h\nhttps://venmo.com/Mike-A-34",
+    button1=OKAY or "Close",timeout=0,whileDead=true,hideOnEscape=true,
     OnShow=function(dialog)
-      if dialog.editBox then
-        dialog.editBox:SetText("https://venmo.com/Mike-A-34")
-        dialog.editBox:HighlightText()
+      if dialog.text and dialog.text.SetHyperlinksEnabled then
+        dialog.text:SetHyperlinksEnabled(true)
+      end
+      if not dialog.aetherDonateLinkHooked and dialog.HookScript then
+        dialog:HookScript("OnHyperlinkClick",function(_,link,text,button)
+          if type(SetItemRef)=="function" then
+            SetItemRef(link,text,button,ChatFrame1)
+          elseif type(ChatFrame_OnHyperlinkShow)=="function" then
+            ChatFrame_OnHyperlinkShow(ChatFrame1,link,text,button)
+          end
+        end)
+        dialog.aetherDonateLinkHooked=true
       end
     end,
-    EditBoxOnEscapePressed=function(dialog) dialog:Hide() end,
   }
+end
+local function openDonationPage()
+  local url="https://venmo.com/Mike-A-34"
+  local link="url:"..url
+  if type(SetItemRef)=="function" then
+    SetItemRef(link,url,"LeftButton",ChatFrame1)
+  elseif type(ChatFrame_OnHyperlinkShow)=="function" then
+    ChatFrame_OnHyperlinkShow(ChatFrame1,link,url,"LeftButton")
+  elseif StaticPopup_Show then
+    StaticPopup_Show("AETHERINVENTORY_DONATE")
+  end
 end
 local function createSettingsPage()
   settingsPage=CreateFrame("Frame",nil,characterContent)
@@ -600,8 +619,11 @@ local function createSettingsPage()
   end)
   local resetNote=textLabel(settingsPage,"Colors are saved automatically.",10,MUTED)
   resetNote:SetPoint("TOPLEFT",settingsPage,"TOPLEFT",8,-278)
+  local donateNote=textLabel(settingsPage,"Donations help fund ongoing development.",10,MUTED)
+  donateNote:SetPoint("LEFT",settingsPage,"TOPLEFT",8,-324)
+  donateNote:SetWidth(174);donateNote:SetHeight(30);donateNote:SetWordWrap(true)
   makeButton(settingsPage,"Donate via Venmo",194,-310,154,29,function()
-    if StaticPopup_Show then StaticPopup_Show("AETHERINVENTORY_DONATE") end
+    openDonationPage()
   end)
   settingsPage:Hide()
 end
@@ -1154,26 +1176,51 @@ local function updateEquipped(snap)
   end
   if upgradeText then upgradeText:SetText(table.concat(lines,"\n")) end
   if statText then
-    local _,agi=UnitStat("player",2)
-    local _,sta=UnitStat("player",3)
-    local armorBase,armorEffective=apiValue(UnitArmor,"player")
-    local armor=armorEffective or armorBase or "?"
+    local staBase,staEffective=apiValue(UnitStat,"player",3)
+    local intBase,intEffective=apiValue(UnitStat,"player",4)
     local hp,hpMax=apiValue(UnitHealth,"player"),apiValue(UnitHealthMax,"player")
     local mana,manaMax=apiValue(UnitPower,"player",0),apiValue(UnitPowerMax,"player",0)
     local speed=apiValue(GetUnitSpeed,"player")
     local healthText=hp and hpMax and (hp.."/"..hpMax) or "?"
     local manaText=mana and manaMax and (mana.."/"..manaMax) or "?"
     local speedText=speed and (floor(speed/7*100+0.5).."%") or "?"
-    statText:SetText("Health "..healthText.."   Mana "..manaText.."   Speed "..speedText)
+    local function valueText(value,boosted)
+      return (boosted and "|cff64e59c" or "|cffffffff")..tostring(value or "?").."|r"
+    end
+    local function fieldText(label,value,boosted)
+      return "|cffffd36b"..label..":|r "..valueText(value,boosted)
+    end
+    local speedBoosted=type(speed)=="number" and speed>7.01
+    statText:SetText(fieldText("Health",healthText,staBase and staEffective and staEffective>staBase)..
+      "   "..fieldText("Mana",manaText,intBase and intEffective and intEffective>intBase)..
+      "   "..fieldText("Speed",speedText,speedBoosted))
     statText:SetWidth(372)
   end
   if gearStatText then
-    local _,agi=UnitStat("player",2)
-    local _,sta=UnitStat("player",3)
+    local function attribute(index)
+      local base,effective=apiValue(UnitStat,"player",index)
+      if effective==nil then effective=base end
+      return base,effective
+    end
+    local strBase,str=attribute(1)
+    local agiBase,agi=attribute(2)
+    local staBase,sta=attribute(3)
+    local intBase,int=attribute(4)
+    local spiBase,spi=attribute(5)
     local armorBase,armorEffective=apiValue(UnitArmor,"player")
     local armor=armorEffective or armorBase or "?"
-    gearStatText:SetText("Armor "..tostring(armor).."   Agility "..tostring(agi or "?")..
-      "   Stamina "..tostring(sta or "?").."   |cff64e59c"..#snap.upgrades.." upgrades|r")
+    local function valueText(value,base)
+      local boosted=type(value)=="number" and type(base)=="number" and value>base
+      return (boosted and "|cff64e59c" or "|cffffffff")..tostring(value or "?").."|r"
+    end
+    local function fieldText(label,value,base)
+      return "|cffffd36b"..label..":|r "..valueText(value,base)
+    end
+    local armorBoosted=type(armorEffective)=="number" and type(armorBase)=="number" and armorEffective>armorBase
+    local armorText="|cffffd36bArmor:|r "..(armorBoosted and "|cff64e59c" or "|cffffffff")..tostring(armor).."|r"
+    gearStatText:SetText(armorText.."   "..fieldText("Strength",str,strBase).."   "..fieldText("Agility",agi,agiBase)..
+      "\n"..fieldText("Stamina",sta,staBase).."   "..fieldText("Intellect",int,intBase).."   "..fieldText("Spirit",spi,spiBase)..
+      "\n|cff64e59c"..#snap.upgrades.." upgrades|r")
     gearStatText:SetWidth(372)
   end
   if summaryText then summaryText:SetText("") end
@@ -1396,7 +1443,7 @@ function A.CreateUI()
   gearElements[#gearElements+1]=gearStatText
   summaryText=textLabel(frame,"",12,TEAL);summaryText:SetPoint("TOPLEFT",26,-615);summaryText:Hide()
   gearElements[#gearElements+1]=summaryText
-  upgradeText=textLabel(frame,"",11,LIGHT);upgradeText:SetPoint("TOPLEFT",26,-646)
+  upgradeText=textLabel(frame,"",11,LIGHT);upgradeText:SetPoint("TOPLEFT",26,-668)
   upgradeText:SetWidth(372);upgradeText:SetJustifyH("LEFT")
   gearElements[#gearElements+1]=upgradeText
 
@@ -1433,12 +1480,27 @@ function A.CreateUI()
   local note=textLabel(frame,"Empty slots remain in their original bags",11,MUTED);note:SetPoint("TOPRIGHT",-31,-107)
   searchBox=CreateFrame("EditBox",nil,frame,"InputBoxTemplate")
   searchBox:SetPoint("TOPLEFT",frame,"TOPLEFT",446,-133)
-  searchBox:SetSize(610,26)
+  searchBox:SetSize(500,26)
   searchBox:SetAutoFocus(false)
-  searchBox:SetTextInsets(9,9,0,0)
+  searchBox:SetTextInsets(9,31,0,0)
   searchBox:SetFontObject("ChatFontNormal")
   searchBox:SetText("")
-  searchBox:SetScript("OnTextChanged",function() if UIReady and frame:IsShown() and not InCombatLockdown() then A.Refresh() end end)
+  local clearSearch=CreateFrame("Button",nil,frame)
+  clearSearch:SetPoint("RIGHT",searchBox,"RIGHT",-3,0)
+  clearSearch:SetSize(22,22)
+  local clearLabel=textLabel(clearSearch,"X",13,{.94,.82,.58})
+  clearLabel:SetPoint("CENTER",0,0)
+  clearSearch:SetScript("OnEnter",function()clearLabel:SetTextColor(1,.35,.35)end)
+  clearSearch:SetScript("OnLeave",function()clearLabel:SetTextColor(.94,.82,.58)end)
+  clearSearch:SetScript("OnClick",function()
+    searchBox:SetText("")
+    searchBox:SetFocus()
+  end)
+  clearSearch:Hide()
+  searchBox:SetScript("OnTextChanged",function(self)
+    clearSearch:SetShown(self:GetText()~="")
+    if UIReady and frame:IsShown() and not InCombatLockdown() then A.Refresh() end
+  end)
   searchBox:SetScript("OnEscapePressed",function(self)self:ClearFocus()end)
   searchBox:SetScript("OnEnterPressed",function(self)self:ClearFocus()end)
   local prompt=textLabel(frame,"Search by item name",11,MUTED);prompt:SetPoint("TOPLEFT",455,-140)

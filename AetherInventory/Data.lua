@@ -1,5 +1,5 @@
 local addonName, addon = ...
-addon.version = "0.5.13"
+addon.version = "0.5.14"
 addon.media = "Interface\\AddOns\\AetherInventory\\Media\\"
 
 local C = C_Container

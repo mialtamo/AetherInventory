@@ -1,5 +1,16 @@
 # Aether Inventory Changelog
 
+## 0.5.14
+
+- Add an X button to clear bag-slot searches, shown only while a search is active.
+- Make Donate via Venmo use WoW's URL link handler and replace its blank edit field with a visible clickable link fallback.
+- Add the note "Donations help fund ongoing development" beside the Venmo button in Settings.
+- Shorten the item search field to leave more room in the bag header area.
+- Color quick-stat labels gold; show values white by default and green when the game reports an increase.
+- Add Strength, Intellect, and Spirit to the Gear quick stats and show the upgrade count on its own line.
+
+
+
 ## 0.5.13
 
 - Add a Donate via Venmo link to the bottom of the Settings tab.

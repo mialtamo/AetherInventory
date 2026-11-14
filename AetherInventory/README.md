@@ -1,4 +1,4 @@
-# Aether Inventory 0.5.13 (WoW Forever)
+# Aether Inventory 0.5.14 (WoW Forever)
 
 An experimental character and inventory addon in the ornate purple, lavender, and antique-gold style of Aether Encounter.
 
@@ -6,6 +6,7 @@ An experimental character and inventory addon in the ornate purple, lavender, an
 
 - One character, equipment, and bags window with live item and character data.
 - Character panel tabs for Gear, Stats, Reputation, Skills, Currency, Titles, Pet, and Settings. Long pages scroll.
+- Gear quick stats show Health, Mana, Speed, Armor, Strength, Agility, Stamina, Intellect, and Spirit; labels are gold, values are white by default, and API-reported increases are green. Upgrade count is shown separately.
 - Pet page shows active-pet health, movement speed, armor, damage range, attack power, critical strike, six resistances, happiness, loyalty, diet, and compatible food when the client exposes those values. For feeding, activate the in-game Feed Pet (Yum) ability and then left-click compatible food in Aether Inventory, as with Blizzard's bags.
 - Settings lets you choose RGB colors and background opacity for the window art, bag panels, bag headers, and item slots; choices are saved and can be reset to the original purple palette. The Settings tab also has a Donate via Venmo button.
 - Separate sections for the Backpack, each equipped bag, and the reagent bag when present. Bag sections use the client's bag names when available.
