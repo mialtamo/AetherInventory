@@ -4,7 +4,7 @@ This repository contains the Aether Inventory WoW addon and a small Windows upda
 
 ## Install or update with the updater
 
-1. Download `tools/AetherInventoryUpdater.cmd` and `tools/AetherInventoryUpdater.ps1` from this repository into the same folder.
+1. Download the [Aether Inventory Updater ZIP](https://github.com/mialtamo/AetherInventory/raw/refs/heads/main/tools/AetherInventoryUpdater.zip) and extract it.
 2. Double-click `AetherInventoryUpdater.cmd`.
 3. Select the correct WoW `Interface\AddOns` folder. The updater remembers this location.
 4. Click **Install latest update**. When it finishes, return to WoW and type `/reload`.
