@@ -1137,7 +1137,14 @@ local function updateEquipped(snap)
     local _,sta=UnitStat("player",3)
     local armorBase,armorEffective=apiValue(UnitArmor,"player")
     local armor=armorEffective or armorBase or "?"
-    statText:SetText("Armor "..tostring(armor).."   Agility "..tostring(agi or "?")..
+    local hp,hpMax=apiValue(UnitHealth,"player"),apiValue(UnitHealthMax,"player")
+    local mana,manaMax=apiValue(UnitPower,"player",0),apiValue(UnitPowerMax,"player",0)
+    local speed=apiValue(GetUnitSpeed,"player")
+    local healthText=hp and hpMax and (hp.."/"..hpMax) or "?"
+    local manaText=mana and manaMax and (mana.."/"..manaMax) or "?"
+    local speedText=speed and (floor(speed/7*100+0.5).."%") or "?"
+    statText:SetText("Health "..healthText.."   Mana "..manaText.."   Speed "..speedText..
+      "\nArmor "..tostring(armor).."   Agility "..tostring(agi or "?")..
       "   Stamina "..tostring(sta or "?").."   |cff64e59c"..#snap.upgrades.." upgrades|r")
     statText:SetWidth(372)
   end
@@ -1359,7 +1366,7 @@ function A.CreateUI()
   gearElements[#gearElements+1]=statText
   summaryText=textLabel(frame,"",12,TEAL);summaryText:SetPoint("TOPLEFT",26,-615);summaryText:Hide()
   gearElements[#gearElements+1]=summaryText
-  upgradeText=textLabel(frame,"",11,LIGHT);upgradeText:SetPoint("TOPLEFT",26,-612)
+  upgradeText=textLabel(frame,"",11,LIGHT);upgradeText:SetPoint("TOPLEFT",26,-634)
   upgradeText:SetWidth(372);upgradeText:SetJustifyH("LEFT")
   gearElements[#gearElements+1]=upgradeText
 

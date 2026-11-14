@@ -1,5 +1,10 @@
 # Aether Inventory Changelog
 
+## 0.5.12
+
+- Add current Health, Mana, and Movement Speed to the Gear tab's Stats / Gear quick summary.
+- Keep armor, Agility, Stamina, and upgrade count visible on the second summary line.
+
 ## 0.5.11
 
 - Keep right-click vendor sales on the working container-item API, but route ordinary item use through SecureActionButtonTemplate to avoid the protected-action block.
