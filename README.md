@@ -17,10 +17,11 @@ The updater replaces only the `AetherInventory` addon folder. It keeps the old f
 
 ## Manual install
 
-Download the repository ZIP, then copy the `AetherInventory` folder into the WoW client's `Interface\AddOns` folder. The installed folder must directly contain `AetherInventory.toc`.
+Download [`dist/latest.zip`](https://github.com/mialtamo/AetherInventory/raw/refs/heads/main/dist/latest.zip), extract it, then copy its `AetherInventory` folder into the WoW client's `Interface\AddOns` folder. The installed folder must directly contain `AetherInventory.toc`.
 
 ## Development files
 
-- `AetherInventory/` — addon source and media
+- `AetherInventory/` — readable Lua/XML source and documentation
+- `dist/latest.zip` — complete install package, including the game texture media
 - `tools/` — Windows updater
 
