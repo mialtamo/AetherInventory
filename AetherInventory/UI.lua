@@ -1,7 +1,7 @@
 local _, A = ...
 local floor, ceil, max, min = math.floor, math.ceil, math.max, math.min
 local tinsert = table.insert
-local FRAME_W, FRAME_H = 1110, 720
+local FRAME_W, FRAME_H = 1180, 780
 local GOLD, LIGHT, MUTED, TEAL = {0.93,0.72,0.38}, {0.94,0.90,1}, {0.60,0.56,0.73}, {0.37,0.96,0.76}
 local frame, mainText, model, upgradeText, summaryText, statText, gearStatText, scrollFrame, scrollContent
 local searchBox, footerText, footerGoldText
@@ -1124,7 +1124,7 @@ local function makeInventorySlot(section,bag,slot)
 end
 local function createBagSection(bag)
   local section=CreateFrame("Frame",nil,scrollContent)
-  section:SetSize(562,40)
+  section:SetSize(680,40)
   local bg=tint(section,"BACKGROUND",.10,.078,.15,.75);bg:SetAllPoints()
   local header=tint(section,"ARTWORK",.18,.11,.27,.96)
   header:SetPoint("TOPLEFT",0,0);header:SetPoint("TOPRIGHT",0,0);header:SetHeight(29)
@@ -1194,7 +1194,7 @@ local function updateEquipped(snap)
     statText:SetText(fieldText("Health",healthText,staBase and staEffective and staEffective>staBase)..
       "   "..fieldText("Mana",manaText,intBase and intEffective and intEffective>intBase)..
       "   "..fieldText("Speed",speedText,speedBoosted))
-    statText:SetWidth(372)
+    statText:SetWidth(397);statText:SetJustifyH("CENTER")
   end
   if gearStatText then
     local function attribute(index)
@@ -1221,7 +1221,7 @@ local function updateEquipped(snap)
     gearStatText:SetText(armorText.."   "..fieldText("Strength",str,strBase).."   "..fieldText("Agility",agi,agiBase)..
       "\n"..fieldText("Stamina",sta,staBase).."   "..fieldText("Intellect",int,intBase).."   "..fieldText("Spirit",spi,spiBase)..
       "\n|cff64e59c"..#snap.upgrades.." upgrades|r")
-    gearStatText:SetWidth(372)
+    gearStatText:SetWidth(397);gearStatText:SetJustifyH("CENTER")
   end
   if summaryText then summaryText:SetText("") end
 end
@@ -1418,13 +1418,13 @@ function A.CreateUI()
   local head=textLabel(frame,"AETHER INVENTORY",25,{1,.84,.55});head:SetFont("Fonts\\MORPHEUS.TTF",28,"OUTLINE");head:SetPoint("TOPLEFT",118,-20)
   local sub=textLabel(frame,"CHARACTER  /  EQUIPMENT  /  BAGS",12,{.76,.62,.89});sub:SetPoint("TOPLEFT",118,-60)
   local version=textLabel(frame,"Version "..A.version,12,{.90,.78,.64});version:SetPoint("TOPRIGHT",-82,-35)
-  local close=makeButton(frame,"X",1055,-20,35,32,nil,"SecureHandlerClickTemplate")
+  local close=makeButton(frame,"X",1125,-20,35,32,nil,"SecureHandlerClickTemplate")
   close:SetFrameRef("window",frame)
   close:SetAttribute("_onclick",[[ self:GetFrameRef("window"):Hide() ]])
   close.label:SetTextColor(1,.45,.38)
-  line(frame,24,-82,1060,.73,.49,.36,.82)
-  line(frame,411,-100,1,.45,.29,.57,.9)
-  local divider=tint(frame,"BORDER",.54,.35,.61,.70);divider:SetPoint("TOPLEFT",409,-93);divider:SetSize(2,575)
+  line(frame,24,-82,1130,.73,.49,.36,.82)
+  line(frame,440,-100,1,.45,.29,.57,.9)
+  local divider=tint(frame,"BORDER",.54,.35,.61,.70);divider:SetPoint("TOPLEFT",438,-93);divider:SetSize(2,635)
   local leftTitle=textLabel(frame,"CHARACTER & EQUIPMENT",15,GOLD);leftTitle:SetPoint("TOPLEFT",26,-105)
   mainText=textLabel(frame,"",12,LIGHT);mainText:SetPoint("TOPLEFT",26,-129)
   model=CreateFrame("PlayerModel",nil,frame)
@@ -1434,17 +1434,17 @@ function A.CreateUI()
   prepareEquipment()
   gearElements[#gearElements+1]=model
   for _,w in ipairs(equippedWidgets) do gearElements[#gearElements+1]=w end
-  local statDivider=line(frame,24,-577,368,.69,.48,.29,.60);gearElements[#gearElements+1]=statDivider
-  local statLabel=textLabel(frame,"STATS / GEAR",13,GOLD);statLabel:SetPoint("TOPLEFT",25,-568)
+  local statDivider=line(frame,24,-577,397,.69,.48,.29,.60);gearElements[#gearElements+1]=statDivider
+  local statLabel=textLabel(frame,"STATS / GEAR",13,GOLD);statLabel:SetPoint("TOPLEFT",24,-568);statLabel:SetWidth(397);statLabel:SetJustifyH("CENTER")
   gearElements[#gearElements+1]=statLabel
-  statText=textLabel(frame,"",12,LIGHT);statText:SetPoint("TOPLEFT",26,-591)
+  statText=textLabel(frame,"",12,LIGHT);statText:SetPoint("TOPLEFT",24,-591)
   gearElements[#gearElements+1]=statText
-  gearStatText=textLabel(frame,"",12,LIGHT);gearStatText:SetPoint("TOPLEFT",26,-612)
+  gearStatText=textLabel(frame,"",12,LIGHT);gearStatText:SetPoint("TOPLEFT",24,-612)
   gearElements[#gearElements+1]=gearStatText
-  summaryText=textLabel(frame,"",12,TEAL);summaryText:SetPoint("TOPLEFT",26,-615);summaryText:Hide()
+  summaryText=textLabel(frame,"",12,TEAL);summaryText:SetPoint("TOPLEFT",24,-615);summaryText:Hide()
   gearElements[#gearElements+1]=summaryText
-  upgradeText=textLabel(frame,"",11,LIGHT);upgradeText:SetPoint("TOPLEFT",26,-668)
-  upgradeText:SetWidth(372);upgradeText:SetJustifyH("LEFT")
+  upgradeText=textLabel(frame,"",11,LIGHT);upgradeText:SetPoint("TOPLEFT",24,-668)
+  upgradeText:SetWidth(397);upgradeText:SetJustifyH("LEFT")
   gearElements[#gearElements+1]=upgradeText
 
   local tx=24
@@ -1460,7 +1460,7 @@ function A.CreateUI()
     tx=tx+tabWidths[page]+4
   end
   characterScroll=CreateFrame("ScrollFrame",nil,frame)
-  characterScroll:SetSize(378,476);characterScroll:SetPoint("TOPLEFT",frame,"TOPLEFT",25,-180)
+  characterScroll:SetSize(408,536);characterScroll:SetPoint("TOPLEFT",frame,"TOPLEFT",25,-180)
   characterScroll:EnableMouseWheel(true)
   characterContent=CreateFrame("Frame",nil,characterScroll)
   characterContent:SetWidth(368);characterContent:SetHeight(1)
@@ -1476,11 +1476,11 @@ function A.CreateUI()
   autoSortEnabled=not (AetherInventoryDB and AetherInventoryDB.autoSortEnabled==false)
   if A.autoSortButton then A.autoSortButton.label:SetText(autoSortEnabled and "Auto-sort: On" or "Auto-sort: Off") end
 
-  local bagTitle=textLabel(frame,"BAGS BY PHYSICAL SLOT",15,GOLD);bagTitle:SetPoint("TOPLEFT",432,-105)
+  local bagTitle=textLabel(frame,"BAGS BY PHYSICAL SLOT",15,GOLD);bagTitle:SetPoint("TOPLEFT",459,-105)
   local note=textLabel(frame,"Empty slots remain in their original bags",11,MUTED);note:SetPoint("TOPRIGHT",-31,-107)
   searchBox=CreateFrame("EditBox",nil,frame,"InputBoxTemplate")
-  searchBox:SetPoint("TOPLEFT",frame,"TOPLEFT",446,-133)
-  searchBox:SetSize(500,26)
+  searchBox:SetPoint("TOPLEFT",frame,"TOPLEFT",473,-133)
+  searchBox:SetSize(540,26)
   searchBox:SetAutoFocus(false)
   searchBox:SetTextInsets(9,31,0,0)
   searchBox:SetFontObject("ChatFontNormal")
@@ -1503,11 +1503,11 @@ function A.CreateUI()
   end)
   searchBox:SetScript("OnEscapePressed",function(self)self:ClearFocus()end)
   searchBox:SetScript("OnEnterPressed",function(self)self:ClearFocus()end)
-  local prompt=textLabel(frame,"Search by item name",11,MUTED);prompt:SetPoint("TOPLEFT",455,-140)
+  local prompt=textLabel(frame,"Search by item name",11,MUTED);prompt:SetPoint("TOPLEFT",482,-140)
   searchBox:SetScript("OnEditFocusGained",function()prompt:Hide()end)
   searchBox:SetScript("OnEditFocusLost",function()if searchBox:GetText()=="" then prompt:Show()end end)
   searchBox:HookScript("OnTextChanged",function()if searchBox:GetText()=="" and not searchBox:HasFocus() then prompt:Show() else prompt:Hide() end end)
-  local x=432
+  local x=459
   for _,cat in ipairs(categories) do
     local widths={All=53,Equipment=104,Consumables=111,Materials=93,Quest=71,Junk=62,Recent=74}
     local w=widths[cat] or 74
@@ -1516,12 +1516,12 @@ function A.CreateUI()
   end
   
   scrollFrame=CreateFrame("ScrollFrame",nil,frame)
-  scrollFrame:SetSize(562,429);scrollFrame:SetPoint("TOPLEFT",frame,"TOPLEFT",433,-212)
+  scrollFrame:SetSize(680,489);scrollFrame:SetPoint("TOPLEFT",frame,"TOPLEFT",460,-212)
   scrollFrame:EnableMouseWheel(true)
   scrollContent=CreateFrame("Frame",nil,scrollFrame)
-  scrollContent:SetWidth(562);scrollContent:SetHeight(1000)
+  scrollContent:SetWidth(680);scrollContent:SetHeight(1000)
   emptyFilterText=textLabel(scrollContent,"",15,{.82,.75,.90})
-  emptyFilterText:SetPoint("TOPLEFT",scrollContent,"TOPLEFT",18,-22);emptyFilterText:SetWidth(520);emptyFilterText:SetHeight(30)
+  emptyFilterText:SetPoint("TOPLEFT",scrollContent,"TOPLEFT",18,-22);emptyFilterText:SetWidth(640);emptyFilterText:SetHeight(30)
   emptyFilterText:Hide()
   scrollFrame:SetScrollChild(scrollContent)
   scrollFrame:SetScript("OnMouseWheel",function(self,delta)
@@ -1530,32 +1530,32 @@ function A.CreateUI()
   end)
   for _,bag in ipairs(A.bagIDs) do createBagSection(bag) end
   applySavedColors()
-  local scrollBack=tint(frame,"BACKGROUND",.06,.05,.10,.27);scrollBack:SetPoint("TOPLEFT",frame,"TOPLEFT",429,-209);scrollBack:SetSize(570,434)
-  local up=makeButton(frame,"UP",1007,-238,38,30,function()
+  local scrollBack=tint(frame,"BACKGROUND",.06,.05,.10,.27);scrollBack:SetPoint("TOPLEFT",frame,"TOPLEFT",456,-209);scrollBack:SetSize(688,494)
+  local up=makeButton(frame,"UP",1104,-238,38,30,function()
     scrollFrame:SetVerticalScroll(max(0,scrollFrame:GetVerticalScroll()-170))
   end)
-  local down=makeButton(frame,"DN",1007,-603,38,30,function()
+  local down=makeButton(frame,"DN",1104,-663,38,30,function()
     local maxScroll=max(0,scrollContent:GetHeight()-scrollFrame:GetHeight())
     scrollFrame:SetVerticalScroll(min(maxScroll,scrollFrame:GetVerticalScroll()+170))
   end)
-  line(frame,25,-682,1060,.78,.51,.3,.55)
+  line(frame,25,-742,1130,.78,.51,.3,.55)
   footerText=textLabel(frame,"",9,{.98,.90,.68});footerText:SetPoint("BOTTOMLEFT",frame,"BOTTOMLEFT",18,18);footerText:SetWidth(275);footerText:SetHeight(18);footerText:SetWordWrap(false)
   footerGoldText=textLabel(frame,"",11,GOLD);footerGoldText:SetJustifyH("RIGHT");footerGoldText:SetPoint("BOTTOMRIGHT",frame,"BOTTOMLEFT",400,18);footerGoldText:SetWidth(90);footerGoldText:SetHeight(18)
   local readOnly=textLabel(frame,"Click the small lock to protect an item; right-click to use or sell at a vendor.",11,MUTED)
   readOnly:SetPoint("BOTTOMRIGHT",frame,"BOTTOMRIGHT",-26,12)
-  makeButton(frame,"Clean Up",435,-649,88,29,function()
+  makeButton(frame,"Clean Up",462,-709,88,29,function()
     local sorted=sortBags()
     if sorted and autoSortEnabled then
       autoSortPending=false;autoSortSettling=false
       lastAutoSortSignature=bagLayoutSignature();autoSortSeeded=true
     end
   end)
-  A.autoSortButton=makeButton(frame,autoSortEnabled and "Auto-sort: On" or "Auto-sort: Off",528,-649,116,29,function()
+  A.autoSortButton=makeButton(frame,autoSortEnabled and "Auto-sort: On" or "Auto-sort: Off",555,-709,116,29,function()
     setAutoSort(not autoSortEnabled)
   end)
-  toggleBindButtons.B=makeButton(frame,AetherInventoryDB.toggleKeys and AetherInventoryDB.toggleKeys.B and "Unbind B" or "Bind B",720,-649,70,29,function()toggleToggleKey("B")end)
-  toggleBindButtons.C=makeButton(frame,AetherInventoryDB.toggleKeys and AetherInventoryDB.toggleKeys.C and "Unbind C" or "Bind C",795,-649,70,29,function()toggleToggleKey("C")end)
-  makeButton(frame,"Open normal bags",880,-649,145,29,function()
+  toggleBindButtons.B=makeButton(frame,AetherInventoryDB.toggleKeys and AetherInventoryDB.toggleKeys.B and "Unbind B" or "Bind B",747,-709,70,29,function()toggleToggleKey("B")end)
+  toggleBindButtons.C=makeButton(frame,AetherInventoryDB.toggleKeys and AetherInventoryDB.toggleKeys.C and "Unbind C" or "Bind C",822,-709,70,29,function()toggleToggleKey("C")end)
+  makeButton(frame,"Open normal bags",907,-709,145,29,function()
     if type(ToggleAllBags)=="function" then ToggleAllBags() end
   end)
   

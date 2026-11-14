@@ -1,5 +1,12 @@
 # Aether Inventory Changelog
 
+## 0.5.15
+
+- Enlarge the main window and expand the character, gear, and bag viewing areas.
+- Center the Stats / Gear heading and the quick-stat rows; keep upgrade details clear of the footer.
+
+
+
 ## 0.5.14
 
 - Add an X button to clear bag-slot searches, shown only while a search is active.
