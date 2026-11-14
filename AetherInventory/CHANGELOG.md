@@ -1,5 +1,11 @@
 # Aether Inventory Changelog
 
+## 0.5.16
+
+- Make Donate via Venmo post a native clickable link in chat; the addon cannot open an external browser directly.
+
+
+
 ## 0.5.15
 
 - Enlarge the main window and expand the character, gear, and bag viewing areas.

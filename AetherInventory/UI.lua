@@ -553,36 +553,14 @@ local function openColorPicker(key)
   end
 end
 
-if StaticPopupDialogs then
-  StaticPopupDialogs["AETHERINVENTORY_DONATE"]={
-    text="Donations help fund ongoing development.\nClick below to open Venmo:\n|Hurl:https://venmo.com/Mike-A-34|h|cff70dfffOpen Venmo|h|h\nhttps://venmo.com/Mike-A-34",
-    button1=OKAY or "Close",timeout=0,whileDead=true,hideOnEscape=true,
-    OnShow=function(dialog)
-      if dialog.text and dialog.text.SetHyperlinksEnabled then
-        dialog.text:SetHyperlinksEnabled(true)
-      end
-      if not dialog.aetherDonateLinkHooked and dialog.HookScript then
-        dialog:HookScript("OnHyperlinkClick",function(_,link,text,button)
-          if type(SetItemRef)=="function" then
-            SetItemRef(link,text,button,ChatFrame1)
-          elseif type(ChatFrame_OnHyperlinkShow)=="function" then
-            ChatFrame_OnHyperlinkShow(ChatFrame1,link,text,button)
-          end
-        end)
-        dialog.aetherDonateLinkHooked=true
-      end
-    end,
-  }
-end
 local function openDonationPage()
   local url="https://venmo.com/Mike-A-34"
-  local link="url:"..url
-  if type(SetItemRef)=="function" then
-    SetItemRef(link,url,"LeftButton",ChatFrame1)
-  elseif type(ChatFrame_OnHyperlinkShow)=="function" then
-    ChatFrame_OnHyperlinkShow(ChatFrame1,link,url,"LeftButton")
-  elseif StaticPopup_Show then
-    StaticPopup_Show("AETHERINVENTORY_DONATE")
+  local message="|cffffd36bAether Inventory:|r Click |Hurl:"..url.."|h|cff70dfff[Open Venmo]|h|h"
+  local chat=DEFAULT_CHAT_FRAME
+  if chat and type(chat.AddMessage)=="function" then
+    chat:AddMessage(message)
+  elseif type(print)=="function" then
+    print("Aether Inventory: "..url)
   end
 end
 local function createSettingsPage()

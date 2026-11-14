@@ -1,4 +1,4 @@
-# Aether Inventory 0.5.15 (WoW Forever)
+# Aether Inventory 0.5.16 (WoW Forever)
 
 An experimental character and inventory addon in the ornate purple, lavender, and antique-gold style of Aether Encounter.
 
