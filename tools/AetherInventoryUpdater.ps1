@@ -10,6 +10,25 @@ $settings = @{}
 if (Test-Path -LiteralPath $settingsFile) {
     try { $settings = Get-Content -LiteralPath $settingsFile -Raw | ConvertFrom-Json -AsHashtable } catch { $settings = @{} }
 }
+$detectedAddOnsPath = [string]$settings.AddOnsPath
+if (-not $detectedAddOnsPath -or -not (Test-Path -LiteralPath $detectedAddOnsPath -PathType Container)) {
+    $detectedAddOnsPath = ''
+    try {
+        $wowProcess = Get-Process -Name 'Wow' -ErrorAction Stop | Select-Object -First 1
+        if ($wowProcess.Path) {
+            $candidate = Join-Path (Split-Path -Parent $wowProcess.Path) 'Interface\AddOns'
+            if (Test-Path -LiteralPath $candidate -PathType Container) { $detectedAddOnsPath = $candidate }
+        }
+    } catch { }
+    if (-not $detectedAddOnsPath) {
+        $candidates = @(
+            (Join-Path ${env:ProgramFiles(x86)} 'World of Warcraft\_forever_\Interface\AddOns'),
+            (Join-Path $env:ProgramFiles 'World of Warcraft\_forever_\Interface\AddOns'),
+            'C:\Games\World of Warcraft\_forever_\Interface\AddOns'
+        )
+        $detectedAddOnsPath = $candidates | Where-Object { $_ -and (Test-Path -LiteralPath $_ -PathType Container) } | Select-Object -First 1
+    }
+}
 
 $form = New-Object System.Windows.Forms.Form
 $form.Text = 'Aether Inventory Updater'
@@ -36,7 +55,7 @@ $form.Controls.Add($pathLabel)
 $pathBox = New-Object System.Windows.Forms.TextBox
 $pathBox.Location = New-Object System.Drawing.Point(20, 86)
 $pathBox.Size = New-Object System.Drawing.Size(405, 28)
-$pathBox.Text = [string]$settings.AddOnsPath
+$pathBox.Text = $detectedAddOnsPath
 $pathBox.BackColor = [System.Drawing.Color]::FromArgb(250, 247, 240)
 $form.Controls.Add($pathBox)
 
@@ -72,7 +91,7 @@ $donate.Add_Click({ Start-Process $donationUrl })
 $form.Controls.Add($donate)
 
 $status = New-Object System.Windows.Forms.Label
-$status.Text = 'Choose your WoW AddOns folder, then click Install.'
+$status.Text = if ($pathBox.Text) { 'WoW AddOns folder found. Click Install latest update.' } else { 'Choose your WoW AddOns folder, then click Install.' }
 $status.Location = New-Object System.Drawing.Point(20, 180)
 $status.Size = New-Object System.Drawing.Size(510, 28)
 $form.Controls.Add($status)

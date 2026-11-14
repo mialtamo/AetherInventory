@@ -6,7 +6,7 @@ This repository contains the Aether Inventory WoW addon and a small Windows upda
 
 1. Download the [Aether Inventory Updater ZIP](https://github.com/mialtamo/AetherInventory/raw/refs/heads/main/tools/AetherInventoryUpdater.zip) and extract it.
 2. Double-click `AetherInventoryUpdater.cmd`.
-3. Select the correct WoW `Interface\AddOns` folder. The updater remembers this location.
+3. The updater looks for your running WoW client and detects its `Interface\AddOns` folder. If WoW is closed or it can’t find the folder, click **Browse…** once; it remembers the location.
 4. Click **Install latest update**. When it finishes, return to WoW and type `/reload`.
 
 The updater runs outside the game, like the CurseForge app. The WoW addon itself cannot download or write addon files. WoW can remain open during installation; `/reload` loads the files afterward.
